@@ -9,7 +9,8 @@ ipDict = {}
 
 cmds = (
     "add <ip> <weight>",
-    "del <ip>"
+    "del <ip>",
+    "exit"
 )
 
 def addIP(ip,weight):
@@ -33,11 +34,20 @@ def handleCmd():
     '''
     Trata os comandos recebidos pelo usuário
     '''
-    argv1,argv2,*argv3 = input('--> ').split()
-    if argv1 == 'add':
-        addIP(argv2,argv3)
-    elif argv1 == 'del':
-        deleteIP(argv2)
+    status = 'running'
+    while(status!='exit'):
+        args = input('--> ').split()
+        try:
+            if args[0] == 'exit':
+                status = 'exit'
+            elif args[0] == 'add':
+                addIP(args[1],args[2])
+            elif args[0] == 'del':
+                deleteIP(args[1])
+            else:
+                print('Command unknown')
+        except IndexError:
+            print('Not enough arguments')
 
 def messageJson(type,source,destination,payload = None):
     '''
