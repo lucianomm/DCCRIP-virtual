@@ -24,9 +24,9 @@ def deleteIP(ip):
     '''
     Deleta um IP do banco de dados do roteador
     '''
-    print(f'Deleting IP {ip}')
     try:
         del ipDict[ip]
+        print(f'Deleting IP {ip}')
     except KeyError:
         print('IP not found in cache')
 
