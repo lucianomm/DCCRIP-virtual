@@ -41,6 +41,12 @@ def updateRoutes():
     '''
     pass
 
+def trace(msg):
+    '''
+    Trata a mensagem do tipo 'trace' para envio posterior
+    '''
+    pass
+
 if __name__ == "__main__":
     print("Comandos de interface disponíveis:")
     print('\n'.join(cmds))
