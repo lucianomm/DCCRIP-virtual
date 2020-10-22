@@ -29,10 +29,11 @@ def deleteIP(ip):
     except KeyError:
         print('IP not found in cache')
 
-def recvCmd(argv1,argv2,argv3):
+def handleCmd():
     '''
     Trata os comandos recebidos pelo usuário
     '''
+    argv1,argv2,*argv3 = input('--> ').split()
     if argv1 == 'add':
         addIP(argv2,argv3)
     elif argv1 == 'del':
@@ -59,6 +60,5 @@ def trace(msg):
 if __name__ == "__main__":
     print("Comandos de interface disponíveis:")
     print('\n'.join(cmds))
-    cmdInput1,cmdInput2,*cmdInput3 = input('--> ').split()
-    recvCmd(cmdInput1,cmdInput2,cmdInput3)
+    handleCmd()
     pass
