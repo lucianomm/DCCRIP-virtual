@@ -77,24 +77,6 @@ def handleCmd():
         except IndexError:
             print('Not enough arguments')
 
-def messageJson(type,source,destination,payload = None):
-    '''
-    Recebe os parâmetros de possíveis mensagens e transforma em pacotes Json para envio padronizado
-    '''
-    pass
-
-def updateRoutes():
-    '''
-    Atualiza as rotas conhecidas pelo roteador
-    '''
-    pass
-
-def trace(msg):
-    '''
-    Trata a mensagem do tipo 'trace' para envio posterior
-    '''
-    pass
-
 if __name__ == "__main__":
     print("Setup de Roteador")
     rotIp = 0
