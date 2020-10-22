@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 import socket
 import os
@@ -70,5 +70,6 @@ def trace(msg):
 if __name__ == "__main__":
     print("Comandos de interface disponíveis:")
     print('\n'.join(cmds))
-    handleCmd()
+    cmdHandler = threading.Thread(target=handleCmd, daemon=True) 
+    cmdHandler.start()
     pass
