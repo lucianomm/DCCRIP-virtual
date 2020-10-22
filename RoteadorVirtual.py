@@ -5,6 +5,8 @@ import os
 import json
 import threading
 
+ipDict = {}
+
 cmds = (
     "add <ip> <weight>",
     "del <ip>"
@@ -14,15 +16,20 @@ def addIP(ip,weight):
     '''
     Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
     '''
-    pass
+    print(f'Adding a new IP: {ip}, with weight {weight}')
+    ipDict[ip] = weight
 
 def deleteIP(ip):
     '''
     Deleta um IP do banco de dados do roteador
     '''
-    pass
+    print(f'Deleting IP {ip}')
+    try:
+        del ipDict[ip]
+    except KeyError:
+        print('IP not found in cache')
 
-def recvCmd(argv1,argv2,argv3=None):
+def recvCmd(argv1,argv2,argv3):
     '''
     Trata os comandos recebidos pelo usuário
     '''
@@ -52,4 +59,6 @@ def trace(msg):
 if __name__ == "__main__":
     print("Comandos de interface disponíveis:")
     print('\n'.join(cmds))
+    cmdInput1,cmdInput2,*cmdInput3 = input('--> ').split()
+    recvCmd(cmdInput1,cmdInput2,cmdInput3)
     pass
