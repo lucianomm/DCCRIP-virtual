@@ -73,12 +73,12 @@ class RoteadorVirtual:
         '''
         return '127.0.0.1'
 
-    def addIP(self,ip,weight):
+    def addIP(self,ip,weight,nextDest):
         '''
         Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
         '''
-        print(f'Adding a new IP: {ip}, with weight {weight}')
-        self.ipDict[ip] = weight
+        print(f'Adding a new IP: {ip}, with weight {weight}, next destination {nextDest}')
+        self.ipDict[ip] = (weight,nextDest)
 
     def deleteIP(self,ip):
         '''
@@ -101,7 +101,7 @@ def handleCmd(roteador):
             if args[0] == 'exit':
                 status = 'exit'
             elif args[0] == 'add':
-                roteador.addIP(args[1],args[2])
+                roteador.addIP(args[1],args[2],args[1])
             elif args[0] == 'del':
                 roteador.deleteIP(args[1])
             else:
