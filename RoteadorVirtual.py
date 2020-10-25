@@ -113,7 +113,7 @@ def handleCmd(roteador):
             print('Not enough arguments')
 
 def setup(file):
-    with open(file,'w') as commands:
+    with open(file,'r') as commands:
         for line in commands:
             os.system(line)
 
@@ -125,7 +125,10 @@ if __name__ == "__main__":
         print('Initialize program with <ip> <updateTime> [SETUP FILE].txt')
         quit()
     if sys.argv[3]:
-        setup(sys.argv[3])
+        try:
+            setup(sys.argv[3])
+        except FileNotFoundError:
+            print('[ERROR] -- file not found. \nTry using complete path')
     print("Comandos de interface disponíveis:")
     print('\n'.join(cmds))
     cmdHandler = threading.Thread(target=handleCmd, daemon=True, args=((roteador,))) 
