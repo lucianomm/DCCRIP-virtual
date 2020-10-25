@@ -62,7 +62,7 @@ class RoteadorVirtual:
             if not conn.recv(2):
                 print("[ERROR] -- Size of message too large")
                 return -1
-        return data
+        return data,addr
 
     def trace(self):
         '''
@@ -112,8 +112,20 @@ def handleCmd(roteador):
         except IndexError:
             print('Not enough arguments')
 
+def setup(file):
+    with open(file,'w') as commands:
+        for line in commands:
+            os.system(line)
+
 if __name__ == "__main__":
-    roteador = RoteadorVirtual(sys.argv[1],sys.argv[2]) #Setup do Roteador
+    try:
+        roteador = RoteadorVirtual(sys.argv[1],sys.argv[2]) #Setup do Roteador
+    except IndexError:
+        print('[ERROR] -- Too few arguments')
+        print('Initialize program with <ip> <updateTime> [SETUP FILE].txt')
+        quit()
+    if sys.argv[3]:
+        setup(sys.argv[3])
     print("Comandos de interface disponíveis:")
     print('\n'.join(cmds))
     cmdHandler = threading.Thread(target=handleCmd, daemon=True, args=((roteador,))) 
