@@ -4,8 +4,11 @@ import socket
 import os
 import json
 import threading
+import sys
 
-ipDict = {}
+
+porta = 55151
+listaMsg = ()
 
 cmds = (
     "add <ip> <weight>",
@@ -13,10 +16,19 @@ cmds = (
     "exit"
 )
 
+listaMsg = list()
+
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
-        self.ip = ip
+        self.ipDict = {}
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print(f"[log] -- binding to ip {ip} - port {porta}")
+        self.sock.bind((ip,porta))
         self.periodo = periodo
+
+    def __del__(self):
+        print('[log] -- Deletando o Roteador')
+        self.sock.close()
 
     def update(self):
         '''
@@ -24,11 +36,33 @@ class RoteadorVirtual:
         '''
         pass
 
-    def mensagem(self):
+    def enviaMsg(self,destIP,data):
         '''
-        Trata mensagens e passa pra frente
+        Envia mensagens
         '''
-        pass
+        self.sock.sendto(data,destIP,porta)
+
+    def resolveMsg(self,msgJson):
+        '''
+        Trata mensagens
+        '''
+        mensagem = json.load(msgJson)
+        if mensagem.type == 'data':
+            self.enviaMsg(self.calculaRota(mensagem.destination),mensagem)
+
+    def recvMsg(self):
+        '''
+        Recebe a mensagem JSON pelo socket
+        '''
+        self.sock.listen()
+        conn, addr = self.sock.accept()
+        with conn:
+            print(f"[log] -- Receiving message from {addr}")
+            data = conn.recv(1024)
+            if not conn.recv(2):
+                print("[ERROR] -- Size of message too large")
+                return -1
+        return data
 
     def trace(self):
         '''
@@ -36,29 +70,30 @@ class RoteadorVirtual:
         '''
         pass
 
-    def calculaRota(self):
+    def calculaRota(self,ip):
         '''
         Calcula rota de menor peso
         '''
+        return '127.0.0.1'
 
-def addIP(ip,weight):
-    '''
-    Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
-    '''
-    print(f'Adding a new IP: {ip}, with weight {weight}')
-    ipDict[ip] = weight
+    def addIP(self,ip,weight):
+        '''
+        Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
+        '''
+        print(f'Adding a new IP: {ip}, with weight {weight}')
+        self.ipDict[ip] = weight
 
-def deleteIP(ip):
-    '''
-    Deleta um IP do banco de dados do roteador
-    '''
-    try:
-        del ipDict[ip]
-        print(f'Deleting IP {ip}')
-    except KeyError:
-        print('IP not found in cache')
+    def deleteIP(self,ip):
+        '''
+        Deleta um IP do banco de dados do roteador
+        '''
+        try:
+            del self.ipDict[ip]
+            print(f'Deleting IP {ip}')
+        except KeyError:
+            print('IP not found in cache')
 
-def handleCmd():
+def handleCmd(roteador):
     '''
     Trata os comandos recebidos pelo usuário
     '''
@@ -69,26 +104,19 @@ def handleCmd():
             if args[0] == 'exit':
                 status = 'exit'
             elif args[0] == 'add':
-                addIP(args[1],args[2])
+                roteador.addIP(args[1],args[2])
             elif args[0] == 'del':
-                deleteIP(args[1])
+                roteador.deleteIP(args[1])
             else:
                 print('Command unknown')
         except IndexError:
             print('Not enough arguments')
 
 if __name__ == "__main__":
-    print("Setup de Roteador")
-    rotIp = 0
-    rotPorta = 0
-    print("Escolha o IP e porta do Roteador:\n--> <ip> <porta>")
-    while(not rotIp and not rotPorta):
-        try:    
-            rotIp, rotPorta = input('--> ').split()
-        except ValueError:
-            print("IP e porta devem ser números inteiros")
+    roteador = RoteadorVirtual(sys.argv[1],sys.argv[2]) #Setup do Roteador
     print("Comandos de interface disponíveis:")
     print('\n'.join(cmds))
-    cmdHandler = threading.Thread(target=handleCmd, daemon=True) 
+    cmdHandler = threading.Thread(target=handleCmd, daemon=True, args=((roteador,))) 
     cmdHandler.start()
+    cmdHandler.join()
     pass
