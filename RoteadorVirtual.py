@@ -8,15 +8,12 @@ import sys
 
 
 porta = 55151
-listaMsg = ()
 
 cmds = (
     "add <ip> <weight>",
     "del <ip>",
     "exit"
 )
-
-listaMsg = list()
 
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
