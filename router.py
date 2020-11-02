@@ -112,16 +112,7 @@ class RoteadorVirtual:
         '''
         Calcula rota de menor peso
         '''
-        otima = []
-        for i in self.rotas:
-            otimas_ip = [row[0] for row in otima]
-            if i[0] not in otimas_ip:
-                otima.append([i[0],i[1],i[2]])            
-            else:
-                indice = otimas_ip.index(i[0])
-                if int(i[2]) <= int(otima[indice][2]):
-                    otima[indice][1] = i[2]
-        return otima
+        return self.rotas[ip][2]
         #return '127.0.0.1'
 
     def addIP(self,ip,weight,nextDest):
