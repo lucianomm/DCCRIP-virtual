@@ -67,9 +67,11 @@ class RoteadorVirtual:
         Trata mensagens
         '''
         mensagem = json.load(msgJson)
-        if mensagem.type == 'data':
+        if mensagem[type] == 'data':
+            if mensagem[destination] == self.sock.getsockname():
+                print("Mensagem de {}, payload:\n{}".format(mensagem[source],mensagem[payload]))
             self.enviaMsg(self.calculaRota(mensagem.destination),mensagem)
-        if mensagem.type == 'trace':
+        if mensagem[type] == 'trace':
             self.trace(mensagem)
 
     def recvMsg(self):
@@ -79,7 +81,7 @@ class RoteadorVirtual:
         self.sock.listen()
         conn, addr = self.sock.accept()
         with conn:
-            print("[log] -- Receiving message from {addr}")
+            print("[log] -- Receiving message from {}".format(addr))
             data = conn.recv(1024)
             if not conn.recv(2):
                 print("[ERROR] -- Size of message too large")
@@ -115,7 +117,7 @@ class RoteadorVirtual:
         '''
         Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
         '''
-        print('Adding a new IP: {ip}, with weight {weight}, next destination {nextDest}')
+        print('Adding a new IP: {}, with weight {}, next destination {}'.format(ip,weight,nextDest))
         self.rotas[ip] = (weight,nextDest,time.time())
         self.rotVizinho.append(ip)
 
@@ -125,7 +127,7 @@ class RoteadorVirtual:
         '''
         try:
             del self.rotas[ip]
-            print('Deleting IP {ip}')
+            print('Deleting IP {}'.format(ip))
         except KeyError:
             print('IP not found in cache')
 
