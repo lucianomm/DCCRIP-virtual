@@ -1,0 +1,51 @@
+Documentação
+O projeto consiste de uma classe chamada Roteador que contém alguns dos métodos
+de execução exigidos no TP
+
+class RoteadorVirtual(builtins.object)
+     |  RoteadorVirtual(ip, periodo)
+     |  
+     |  Methods defined here:
+     |  
+     |  __del__(self)
+     |  
+     |  __init__(self, ip, periodo)
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |  
+     |  addIP(self, ip, weight, nextDest)
+     |      Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
+     |  
+     |  calculaRota(self, ip)
+     |      Calcula rota de menor peso
+     |  
+     |  deleteIP(self, ip)
+     |      Deleta um IP do banco de dados do roteador
+     |  
+     |  enviaMsg(self, destIP, data)
+     |      Envia mensagens
+     |  
+     |  enviaUpdate(self)
+     |      Envia mensagem do tipo update para os roteadores vizinhos
+     |  
+     |  recebeUpdate(self, ipDest)
+     |      Percorre dicionário IP e faz update de pesos
+     |  
+     |  recvMsg(self)
+     |      Recebe a mensagem JSON pelo socket
+     |  
+     |  resolveMsg(self, msgJson)
+     |      Trata mensagens
+     |  
+     |  trace(self, traceMsg)
+     |      Trata as mensagens de trace
+
+FUNCTIONS
+    handleCmd(roteador)
+        Trata os comandos recebidos pelo usuário
+    
+    setup(file)
+
+DATA
+    cmds = ('add <ip> <weight>', 'del <ip>', 'exit')
+    enlaces = []
+    porta = 55151
