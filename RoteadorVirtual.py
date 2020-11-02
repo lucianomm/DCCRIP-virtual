@@ -40,9 +40,7 @@ class RoteadorVirtual:
         '''
         for ip in self.rotaUpdate.keys():
             if self.rotas[ip][0] > self.rotaUpdate[ip][0]:
-                self.rotas[ip][0] = self.rotaUpdate[ip][0]
-                self.rotas[ip][1] = ipDest
-                self.rotas[ip][2] = time.time()
+                self.rotas[ip] = (self.rotaUpdate[ip][0],ipDest,time.time())
         pass
 
     def enviaUpdate(self):
