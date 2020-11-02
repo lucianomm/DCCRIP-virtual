@@ -22,12 +22,12 @@ cmds = (
 
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
-        self.rotVizinho = ()
+        self.rotVizinho = []
         self.cosnt_time = 4 * periodo
         self.rotas = {}
         self.rotaUpdate = {}
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("[log] -- binding to ip {} - port {}".f(ip,porta))
+        print("[log] -- binding to ip {} - port {}".format(ip,porta))
         self.sock.bind((ip,porta))
         self.periodo = periodo
 
@@ -65,18 +65,21 @@ class RoteadorVirtual:
         destIP = calculaRota(data['destination'])
         self.sock.sendto(msg,(destIP,porta))
 
-    def resolveMsg(self,msgJson):
+    def resolveMsg(self):
         '''
         Trata mensagens
         '''
-        mensagem = json.load(msgJson)
-        if mensagem['type'] == 'data':
-            if mensagem['destination'] == self.sock.getsockname():
-                print("Mensagem de {}, payload:\n{}".format(mensagem['source'],mensagem['payload']))
-            else:
-                self.enviaMsg(mensagem)
-        if mensagem['type'] == 'trace':
-            self.trace(mensagem)
+        while(1):
+            msgJson = recvMsg()
+            mensagem = json.load(msgJson)
+            if mensagem['type'] == 'data':
+                if mensagem['destination'] == self.sock.getsockname():
+                    print("Mensagem de {}, payload:\n{}".format(mensagem['source'],mensagem['payload']))
+                else:
+                    self.enviaMsg(mensagem)
+            if mensagem['type'] == 'trace':
+                self.trace(mensagem)
+       
 
     def recvMsg(self):
         '''
@@ -90,7 +93,7 @@ class RoteadorVirtual:
             if not conn.recv(2):
                 print("[ERROR] -- Size of message too large")
                 return -1
-        return data,addr
+        return data
 
     def trace(self,traceMsg):
         '''
@@ -168,13 +171,16 @@ def setup(file):
             os.system(line)
 
 if __name__ == "__main__":
+    main()
+
+def main():
     try:
         roteador = RoteadorVirtual(sys.argv[1],sys.argv[2]) #Setup do Roteador
     except IndexError:
         print('[ERROR] -- Too few arguments')
         print('Initialize program with <ip> <updateTime> [SETUP FILE].txt')
         quit()
-    if sys.argv[3]:
+    if len(sys.argv)==4:
         try:
             setup(sys.argv[3])
         except FileNotFoundError:
@@ -188,10 +194,10 @@ if __name__ == "__main__":
 
 #Teste
 
-t1 = threading.Thread(target = "__main__",args = (sock,))
+t1 = threading.Thread(target = main(),args = (sock,))
 t1.start()
-t2 = threading.Thread(target = roteador.resolveMsg(),args = (sock,))
+t2 = threading.Thread(target = roteador.resolveMsg())
 t2.start()
+
 while(1):
-    
     time.sleep(5)

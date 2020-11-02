@@ -1,11 +1,11 @@
 Documentação
-O projeto consiste de uma classe chamada Roteador que contém alguns dos métodos
-de execução exigidos no TP
+O projeto consiste de uma classe chamada RoteadorVirtual que contém alguns dos métodos
+de execução exigidos no TP.
 
 Cada método da classe serve para dividir a responsabilidade de função,
 assim sendo, as threads são executadas em certas funções para permitir que os
 comandos de interface sejam computados, e também permitir que as mensagens sejam
-escutadas e trabalhadas de acordo com a lógica requerida do TP
+escutadas e trabalhadas de acordo com a lógica requerida do TP:
 
 class RoteadorVirtual(builtins.object)
      |  RoteadorVirtual(ip, periodo)
