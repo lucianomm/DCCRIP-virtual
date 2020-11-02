@@ -59,6 +59,8 @@ class RoteadorVirtual:
         mensagem = json.load(msgJson)
         if mensagem.type == 'data':
             self.enviaMsg(self.calculaRota(mensagem.destination),mensagem)
+        if mensagem.type == 'trace':
+            trace(mensagem)
 
     def recvMsg(self):
         '''
@@ -74,11 +76,13 @@ class RoteadorVirtual:
                 return -1
         return data,addr
 
-    def trace(self):
+    def trace(self,traceMsg):
         '''
         Trata as mensagens de trace
         '''
-
+        rotIp = self.sock.getsockname()
+        traceMsg[hops].append(rotIp)
+        return traceMsg
         pass
 
     def calculaRota(self,ip):
