@@ -96,6 +96,7 @@ class RoteadorVirtual:
         Trata as mensagens de trace
         '''
         rotIp = self.sock.getsockname()
+        traceMsg['hops'].append(rotIp)
         if traceMsg['destination'] == rotIp:
             print('[log] --- trace message received')
             mensagem['type']='data'
@@ -104,7 +105,6 @@ class RoteadorVirtual:
             mensagem['payload'] = traceMsg
             enviaMsg(mensagem)
         else:
-            traceMsg['hops'].append(rotIp)
             enviaMsg(traceMsg)
         pass
 
