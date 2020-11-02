@@ -172,9 +172,6 @@ def setup(file):
         for line in commands:
             os.system(line)
 
-if __name__ == "__main__":
-    main()
-
 def main():
     try:
         roteador = RoteadorVirtual(sys.argv[1],sys.argv[2]) #Setup do Roteador
@@ -203,3 +200,6 @@ def main():
         time.sleep(5)
     
     pass
+
+if __name__ == "__main__":
+    main()
