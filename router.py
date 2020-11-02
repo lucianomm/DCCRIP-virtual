@@ -67,6 +67,20 @@ class RoteadorVirtual:
         destIP = calculaRota(data['destination'])
         self.sock.sendto(msg,(destIP,porta))
 
+    def recvMsg(self):
+        '''
+        Recebe a mensagem JSON pelo socket
+        '''
+        self.sock.listen()
+        conn, addr = self.sock.accept()
+        with conn:
+            print("[log] -- Receiving message from {}".format(addr))
+            data = conn.recv(1024)
+            if not conn.recv(2):
+                print("[ERROR] -- Size of message too large")
+                return -1
+        return data
+
     def resolveMsg(self):
         '''
         Trata mensagens
@@ -81,21 +95,6 @@ class RoteadorVirtual:
                     self.enviaMsg(mensagem)
             if mensagem['type'] == 'trace':
                 self.trace(mensagem)
-       
-
-    def recvMsg(self):
-        '''
-        Recebe a mensagem JSON pelo socket
-        '''
-        self.sock.listen()
-        conn, addr = self.sock.accept()
-        with conn:
-            print("[log] -- Receiving message from {}".format(addr))
-            data = conn.recv(1024)
-            if not conn.recv(2):
-                print("[ERROR] -- Size of message too large")
-                return -1
-        return data
 
     def trace(self,traceMsg):
         '''
@@ -188,7 +187,6 @@ def main():
     print('\n'.join(cmds))
     cmdHandler = threading.Thread(target=handleCmd, daemon=True, args=((roteador,))) 
     cmdHandler.start()
-    cmdHandler.join()
     t1 = threading.Thread(target = roteador.resolveMsg())
     t1.start()
     if (tempo_anterior - time.time()) > roteador.periodo:
