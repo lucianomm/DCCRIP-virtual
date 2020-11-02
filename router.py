@@ -194,7 +194,7 @@ def main():
 
 #Teste
 
-t1 = threading.Thread(target = "__main__",args = (sock,))
+t1 = threading.Thread(target = main(),args = (sock,))
 t1.start()
 t2 = threading.Thread(target = roteador.resolveMsg())
 t2.start()
