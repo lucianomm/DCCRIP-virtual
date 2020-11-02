@@ -27,7 +27,7 @@ class RoteadorVirtual:
         self.rotas = {}
         self.rotaUpdate = {}
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("[log] -- binding to ip {} - port {}".f(ip,porta))
+        print("[log] -- binding to ip {} - port {}".format(ip,porta))
         self.sock.bind((ip,porta))
         self.periodo = periodo
 
