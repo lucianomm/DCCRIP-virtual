@@ -190,14 +190,10 @@ def main():
     cmdHandler = threading.Thread(target=handleCmd, daemon=True, args=((roteador,))) 
     cmdHandler.start()
     cmdHandler.join()
+    t1 = threading.Thread(target = roteador.resolveMsg())
+    t1.start()
+
+    while(1):
+        time.sleep(5)
+    
     pass
-
-#Teste
-
-t1 = threading.Thread(target = main(),args = (sock,))
-t1.start()
-t2 = threading.Thread(target = roteador.resolveMsg())
-t2.start()
-
-while(1):
-    time.sleep(5)
