@@ -65,18 +65,21 @@ class RoteadorVirtual:
         destIP = calculaRota(data['destination'])
         self.sock.sendto(msg,(destIP,porta))
 
-    def resolveMsg(self,msgJson):
+    def resolveMsg(self):
         '''
         Trata mensagens
         '''
-        mensagem = json.load(msgJson)
-        if mensagem['type'] == 'data':
-            if mensagem['destination'] == self.sock.getsockname():
-                print("Mensagem de {}, payload:\n{}".format(mensagem['source'],mensagem['payload']))
-            else:
-                self.enviaMsg(mensagem)
-        if mensagem['type'] == 'trace':
-            self.trace(mensagem)
+        while(1):
+            msgJson = recvMsg()
+            mensagem = json.load(msgJson)
+            if mensagem['type'] == 'data':
+                if mensagem['destination'] == self.sock.getsockname():
+                    print("Mensagem de {}, payload:\n{}".format(mensagem['source'],mensagem['payload']))
+                else:
+                    self.enviaMsg(mensagem)
+            if mensagem['type'] == 'trace':
+                self.trace(mensagem)
+       
 
     def recvMsg(self):
         '''
@@ -90,7 +93,7 @@ class RoteadorVirtual:
             if not conn.recv(2):
                 print("[ERROR] -- Size of message too large")
                 return -1
-        return data,addr
+        return data
 
     def trace(self,traceMsg):
         '''
@@ -190,7 +193,7 @@ if __name__ == "__main__":
 
 t1 = threading.Thread(target = "__main__",args = (sock,))
 t1.start()
-t2 = threading.Thread(target = roteador.resolveMsg(),args = (sock,))
+t2 = threading.Thread(target = roteador.resolveMsg())
 t2.start()
 while(1):
     
