@@ -9,7 +9,6 @@ import sys
 
 porta = 55151
 enlaces =[]
-roteas = []
 rota_otima = []
 
 cmds = (
@@ -20,7 +19,7 @@ cmds = (
 
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
-        self.ipDict = {}
+        self.rotas = {}
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("[log] -- binding to ip {ip} - port {porta}")
         self.sock.bind((ip,porta))
@@ -71,7 +70,7 @@ class RoteadorVirtual:
 
         pass
 
-    def calculaRota(self,ip):################################################################
+    def calculaRota(self,ip):
         '''
         Calcula rota de menor peso
         '''
@@ -92,14 +91,14 @@ class RoteadorVirtual:
         Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
         '''
         print('Adding a new IP: {ip}, with weight {weight}, next destination {nextDest}')
-        self.ipDict[ip] = (weight,nextDest)
+        self.rotas[ip] = (weight,nextDest)
 
     def deleteIP(self,ip):
         '''
         Deleta um IP do banco de dados do roteador
         '''
         try:
-            del self.ipDict[ip]
+            del self.rotas[ip]
             print('Deleting IP {ip}')
         except KeyError:
             print('IP not found in cache')
