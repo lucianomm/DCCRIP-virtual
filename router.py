@@ -171,6 +171,9 @@ def setup(file):
             os.system(line)
 
 if __name__ == "__main__":
+    main()
+
+def main():
     try:
         roteador = RoteadorVirtual(sys.argv[1],sys.argv[2]) #Setup do Roteador
     except IndexError:
