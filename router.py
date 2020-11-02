@@ -174,7 +174,7 @@ if __name__ == "__main__":
         print('[ERROR] -- Too few arguments')
         print('Initialize program with <ip> <updateTime> [SETUP FILE].txt')
         quit()
-    if sys.argv[3]:
+    if len(sys.argv)=3:
         try:
             setup(sys.argv[3])
         except FileNotFoundError:
