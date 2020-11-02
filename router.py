@@ -12,6 +12,7 @@ import sys
 porta = 55151
 enlaces =[]
 rota_otima = []
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 cmds = (
     "add <ip> <weight>",
@@ -161,8 +162,6 @@ def handleCmd(roteador):
             print('Not enough arguments')
 
 
-        
-
 def setup(file):
     with open(file,'r') as commands:
         for line in commands:
@@ -189,43 +188,10 @@ if __name__ == "__main__":
 
 #Teste
 
-def recepcao(sockt):
-    while 1:
-        msgrecebida = sockt.recv(1024)
-#        print(msgrecebida)
-        recebido = decodifica(msgrecebida)
-
-        if(recebido['type']=='update'):
-            tabelaroteamento_1(recebido)
-        elif(recebido['type']=='trace'):
-            print("mensage recebida=",recebido)
-            if(recebido['destination']==server_address[0]):
-               #enviar mensagem para recebido['source'], uma mensagem data 
-               recebido['hops'].append(server_address[0])
-               resposta = cria_msg('data',server_address[0],recebido['source'],recebido)
-               enviar(sockt,recebido['source'],resposta,roteamento)
-            else:
-               recebido['hops'].append(server_address[0])
-               resposta = cria_msg('trace',recebido['source'],recebido['destination'],recebido['hops'])
-               enviar(sockt,recebido['destination'],resposta,roteamento)
-            
-            
-        elif(recebido['type']=='data'):
-            if(recebido['destination']==server_address[0]):
-              print(recebido['payload'])
-            else:
-              enviar(sockt,recebido['destination'],recebido,roteamento)
-               
-           
-
-
-
-t1 = threading.Thread(target=menu,args=(sock,))
+t1 = threading.Thread(target = "__main__",args = (sock,))
 t1.start()
-t2 = threading.Thread(target=testemsg,args=(sock,socket_thread))
+t2 = threading.Thread(target = roteador.resolveMsg(),args = (sock,))
 t2.start()
-t3 = threading.Thread(target=recepcao,args=(sock,))
-t3.start()
 while(1):
     
     time.sleep(5)
