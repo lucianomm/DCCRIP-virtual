@@ -189,13 +189,12 @@ def main():
     cmdHandler.start()
     t1 = threading.Thread(target = roteador.resolveMsg())
     t1.start()
-    if (tempo_anterior - time.time()) > roteador.periodo:
-        tempo_anterior = time.time()
-        t2 = threading.Thread(target = roteador.enviaUpdate())
-        t2.start()
 
     while(1):
-        time.sleep(5)
+        if (tempo_anterior - time.time()) > roteador.periodo:
+            tempo_anterior = time.time()
+            t2 = threading.Thread(target = roteador.enviaUpdate())
+            t2.start()
     
     pass
 
