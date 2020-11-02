@@ -21,6 +21,7 @@ cmds = (
 
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
+        self.rotVizinho = ()
         self.cosnt_time = 4 * periodo
         self.rotas = {}
         self.rotaUpdate = {}
@@ -52,7 +53,7 @@ class RoteadorVirtual:
             if (self.rotas[ip][2] - time.time()) > self.cosnt_time:
                 self.rotas.pop(ip)
                 
-        for ipEnv in self.rotas.keys():
+        for ipEnv in self.rotVizinho():
             rotasEnv = split_horizon(ip)
             self.sock.sendto(rotasEnv,(ipEnv,porta))
         pass
@@ -118,6 +119,7 @@ class RoteadorVirtual:
         '''
         print('Adding a new IP: {ip}, with weight {weight}, next destination {nextDest}')
         self.rotas[ip] = (weight,nextDest,time.time())
+        self.rotVizinho.append(ip)
 
     def deleteIP(self,ip):
         '''
