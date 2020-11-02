@@ -20,6 +20,7 @@ cmds = (
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
         self.rotas = {}
+        self.rotaUpdate = {}
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("[log] -- binding to ip {ip} - port {porta}")
         self.sock.bind((ip,porta))
@@ -29,9 +30,19 @@ class RoteadorVirtual:
         print('[log] -- Deletando o Roteador')
         self.sock.close()
 
-    def update(self):
+    def recebeUpdate(self,ipDest):
         '''
         Percorre dicionário IP e faz update de pesos
+        '''
+        for ip in rotaUpdate.keys():
+            if self.rotas[ip][0] > self.rotaUpdate[ip][0]:
+                self.rotas[ip][0] = self.rotaUpdate[ip][0]
+                self.rotas[ip][1] = ipDest
+        pass
+
+    def enviaUpdate(self):
+        '''
+        Envia mensagem do tipo update para os roteadores vizinhos
         '''
         pass
 
