@@ -195,6 +195,7 @@ def main():
     t1 = threading.Thread(target = roteador.resolveMsg())
     t1.start()
     if (tempo_anterior - time.time()) > roteador.periodo:
+        tempo_anterior = time.time()
         t2 = threading.Thread(target = roteador.enviaUpdate())
         t2.start()
 
