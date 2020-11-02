@@ -22,7 +22,7 @@ cmds = (
 
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
-        self.rotVizinho = ()
+        self.rotVizinho = []
         self.cosnt_time = 4 * periodo
         self.rotas = {}
         self.rotaUpdate = {}
