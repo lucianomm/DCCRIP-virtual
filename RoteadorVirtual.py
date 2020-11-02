@@ -12,7 +12,6 @@ import sys
 porta = 55151
 enlaces =[]
 rota_otima = []
-cosnt_time = 4 * math.pi #mudar para constante correta
 
 cmds = (
     "add <ip> <weight>",
@@ -22,6 +21,7 @@ cmds = (
 
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
+        self.cosnt_time = 4 * periodo
         self.rotas = {}
         self.rotaUpdate = {}
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,13 +48,13 @@ class RoteadorVirtual:
         '''
         Envia mensagem do tipo update para os roteadores vizinhos
         '''
-        for ip in self.rotaUpdate.keys():
-            if (self.rotas[ip][2] - time.time()) > cosnt_time:
+        for ip in self.rota.keys():
+            if (self.rotas[ip][2] - time.time()) > self.cosnt_time:
                 self.rotas.pop(ip)
-            else:
-                self.rotas[ip][2] = time.time()
-                for ipEnv in self.rotas.keys():
-                    self.sock.sendto(self.rotas,ipEnv,porta)
+                
+        for ipEnv in self.rotas.keys():
+            rotasEnv = split_horizon(ip)
+            self.sock.sendto(rotasEnv,(ipEnv,porta))
         pass
 
     def enviaMsg(self,destIP,data):
@@ -117,7 +117,7 @@ class RoteadorVirtual:
         Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
         '''
         print('Adding a new IP: {ip}, with weight {weight}, next destination {nextDest}')
-        self.rotas[ip] = (weight,nextDest)
+        self.rotas[ip] = (weight,nextDest,time.time())
 
     def deleteIP(self,ip):
         '''
@@ -130,10 +130,11 @@ class RoteadorVirtual:
             print('IP not found in cache')
 
     def split_horizon(rotas,destino):   
-        splitted =[]
+        splitted = {}
+        splitted = self.rotas
         for rota in self.rotas:
-            if rota(destino):
-                splitted.append(rota)
+            if rota[1] == destino:
+                splitted.pop(rota)
         return splitted     
 
 def handleCmd(roteador):
