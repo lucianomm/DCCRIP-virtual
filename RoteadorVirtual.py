@@ -56,22 +56,25 @@ class RoteadorVirtual:
             self.sock.sendto(rotasEnv,(ipEnv,porta))
         pass
 
-    def enviaMsg(self,destIP,data):
+    def enviaMsg(self,data):
         '''
         Envia mensagens
         '''
-        self.sock.sendto(data,destIP,porta)
+        msg = json.dump(data)
+        destIP = calculaRota(data['destination'])
+        self.sock.sendto(msg,(destIP,porta))
 
     def resolveMsg(self,msgJson):
         '''
         Trata mensagens
         '''
         mensagem = json.load(msgJson)
-        if mensagem[type] == 'data':
-            if mensagem[destination] == self.sock.getsockname():
-                print("Mensagem de {}, payload:\n{}".format(mensagem[source],mensagem[payload]))
-            self.enviaMsg(self.calculaRota(mensagem.destination),mensagem)
-        if mensagem[type] == 'trace':
+        if mensagem['type'] == 'data':
+            if mensagem['destination'] == self.sock.getsockname():
+                print("Mensagem de {}, payload:\n{}".format(mensagem['source'],mensagem['payload']))
+            else:
+                self.enviaMsg(mensagem)
+        if mensagem['type'] == 'trace':
             self.trace(mensagem)
 
     def recvMsg(self):
@@ -93,8 +96,16 @@ class RoteadorVirtual:
         Trata as mensagens de trace
         '''
         rotIp = self.sock.getsockname()
-        traceMsg[hops].append(rotIp)
-        return traceMsg
+        if traceMsg['destination'] == rotIp:
+            print('[log] --- trace message received')
+            mensagem['type']='data'
+            mensagem['source'] = traceMsg['destination']
+            mensagem['destination'] = traceMsg['source']
+            mensagem['payload'] = traceMsg
+            enviaMsg(mensagem)
+        else:
+            traceMsg['hops'].append(rotIp)
+            enviaMsg(traceMsg)
         pass
 
     def calculaRota(self,ip):
