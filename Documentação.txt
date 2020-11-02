@@ -2,15 +2,15 @@ Documentação
 O projeto consiste de uma classe chamada Roteador que contém alguns dos métodos
 de execução exigidos no TP
 
+Cada método da classe serve para dividir a responsabilidade de função,
+assim sendo, as threads são executadas em certas funções para permitir que os
+comandos de interface sejam computados, e também permitir que as mensagens sejam
+escutadas e trabalhadas de acordo com a lógica requerida do TP
+
 class RoteadorVirtual(builtins.object)
      |  RoteadorVirtual(ip, periodo)
      |  
      |  Methods defined here:
-     |  
-     |  __del__(self)
-     |  
-     |  __init__(self, ip, periodo)
-     |      Initialize self.  See help(type(self)) for accurate signature.
      |  
      |  addIP(self, ip, weight, nextDest)
      |      Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
@@ -42,10 +42,9 @@ class RoteadorVirtual(builtins.object)
 FUNCTIONS
     handleCmd(roteador)
         Trata os comandos recebidos pelo usuário
-    
-    setup(file)
 
 DATA
     cmds = ('add <ip> <weight>', 'del <ip>', 'exit')
     enlaces = []
     porta = 55151
+
