@@ -13,6 +13,7 @@ porta = 55151
 enlaces =[]
 rota_otima = []
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+tempo_anterior = time.time()
 
 cmds = (
     "add <ip> <weight>",
@@ -22,6 +23,7 @@ cmds = (
 
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
+        self.periodo = periodo
         self.rotVizinho = []
         self.cosnt_time = 4 * periodo
         self.rotas = {}
@@ -192,6 +194,9 @@ def main():
     cmdHandler.join()
     t1 = threading.Thread(target = roteador.resolveMsg())
     t1.start()
+    if (tempo_anterior - time.time()) > roteador.periodo:
+        t2 = threading.Thread(target = roteador.enviaUpdate())
+        t2.start()
 
     while(1):
         time.sleep(5)
