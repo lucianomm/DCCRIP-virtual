@@ -3,14 +3,16 @@
 import socket
 import os
 import json
+import math
 import threading
+import time
 import sys
 
 
 porta = 55151
 enlaces =[]
-roteas = []
 rota_otima = []
+cosnt_time = 4 * math.pi #mudar para constante correta
 
 cmds = (
     "add <ip> <weight>",
@@ -20,7 +22,8 @@ cmds = (
 
 class RoteadorVirtual:
     def __init__(self,ip,periodo):
-        self.ipDict = {}
+        self.rotas = {}
+        self.rotaUpdate = {}
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("[log] -- binding to ip {ip} - port {porta}")
         self.sock.bind((ip,porta))
@@ -30,10 +33,28 @@ class RoteadorVirtual:
         print('[log] -- Deletando o Roteador')
         self.sock.close()
 
-    def update(self):
+    def recebeUpdate(self,ipDest):
         '''
         Percorre dicionário IP e faz update de pesos
         '''
+        for ip in self.rotaUpdate.keys():
+            if self.rotas[ip][0] > self.rotaUpdate[ip][0]:
+                self.rotas[ip][0] = self.rotaUpdate[ip][0]
+                self.rotas[ip][1] = ipDest
+                self.rotas[ip][2] = time.time()
+        pass
+
+    def enviaUpdate(self):
+        '''
+        Envia mensagem do tipo update para os roteadores vizinhos
+        '''
+        for ip in self.rotaUpdate.keys():
+            if (self.rotas[ip][2] - time.time()) > cosnt_time:
+                self.rotas.pop(ip)
+            else:
+                self.rotas[ip][2] = time.time()
+                for ipEnv in self.rotas.keys():
+                    self.sock.sendto(self.rotas,ipEnv,porta)
         pass
 
     def enviaMsg(self,destIP,data):
@@ -49,6 +70,8 @@ class RoteadorVirtual:
         mensagem = json.load(msgJson)
         if mensagem.type == 'data':
             self.enviaMsg(self.calculaRota(mensagem.destination),mensagem)
+        if mensagem.type == 'trace':
+            self.trace(mensagem)
 
     def recvMsg(self):
         '''
@@ -64,19 +87,21 @@ class RoteadorVirtual:
                 return -1
         return data,addr
 
-    def trace(self):
+    def trace(self,traceMsg):
         '''
         Trata as mensagens de trace
         '''
-
+        rotIp = self.sock.getsockname()
+        traceMsg[hops].append(rotIp)
+        return traceMsg
         pass
 
-    def calculaRota(self,ip):################################################################
+    def calculaRota(self,ip):
         '''
         Calcula rota de menor peso
         '''
         otima = []
-        for i in rotas:
+        for i in self.rotas:
             otimas_ip = [row[0] for row in otima]
             if i[0] not in otimas_ip:
                 otima.append([i[0],i[1],i[2]])            
@@ -92,17 +117,24 @@ class RoteadorVirtual:
         Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
         '''
         print('Adding a new IP: {ip}, with weight {weight}, next destination {nextDest}')
-        self.ipDict[ip] = (weight,nextDest)
+        self.rotas[ip] = (weight,nextDest)
 
     def deleteIP(self,ip):
         '''
         Deleta um IP do banco de dados do roteador
         '''
         try:
-            del self.ipDict[ip]
+            del self.rotas[ip]
             print('Deleting IP {ip}')
         except KeyError:
             print('IP not found in cache')
+
+    def split_horizon(rotas,destino):   
+        splitted =[]
+        for rota in self.rotas:
+            if rota(destino):
+                splitted.append(rota)
+        return splitted     
 
 def handleCmd(roteador):
     '''
@@ -122,6 +154,9 @@ def handleCmd(roteador):
                 print('Command unknown')
         except IndexError:
             print('Not enough arguments')
+
+
+        
 
 def setup(file):
     with open(file,'r') as commands:
