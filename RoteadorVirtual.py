@@ -37,25 +37,17 @@ class RoteadorVirtual:
         '''
         Percorre dicionário IP e faz update de pesos
         '''
-<<<<<<< HEAD
         for ip in self.rotaUpdate.keys():
             if self.rotas[ip][0] > self.rotaUpdate[ip][0]:
                 self.rotas[ip][0] = self.rotaUpdate[ip][0]
                 self.rotas[ip][1] = ipDest
                 self.rotas[ip][2] = time.time()
-=======
-        for ip in rotaUpdate.keys():
-            if self.rotas[ip][0] > self.rotaUpdate[ip][0]:
-                self.rotas[ip][0] = self.rotaUpdate[ip][0]
-                self.rotas[ip][1] = ipDest
->>>>>>> 8a2db6e6e657ec8ce43a6b20d2b19f36edf648e8
         pass
 
     def enviaUpdate(self):
         '''
         Envia mensagem do tipo update para os roteadores vizinhos
         '''
-<<<<<<< HEAD
         for ip in self.rotaUpdate.keys():
             if (self.rotas[ip][2] - time.time()) > cosnt_time:
                 self.rotas.pop(ip)
@@ -63,8 +55,6 @@ class RoteadorVirtual:
                 self.rotas[ip][2] = time.time()
                 for ipEnv in self.rotas.keys():
                     self.sock.sendto(self.rotas,ipEnv,porta)
-=======
->>>>>>> 8a2db6e6e657ec8ce43a6b20d2b19f36edf648e8
         pass
 
     def enviaMsg(self,destIP,data):
@@ -81,11 +71,7 @@ class RoteadorVirtual:
         if mensagem.type == 'data':
             self.enviaMsg(self.calculaRota(mensagem.destination),mensagem)
         if mensagem.type == 'trace':
-<<<<<<< HEAD
             self.trace(mensagem)
-=======
-            trace(mensagem)
->>>>>>> 8a2db6e6e657ec8ce43a6b20d2b19f36edf648e8
 
     def recvMsg(self):
         '''
