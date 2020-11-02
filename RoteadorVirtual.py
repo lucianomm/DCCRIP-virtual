@@ -8,6 +8,9 @@ import sys
 
 
 porta = 55151
+enlaces =[]
+roteas = []
+rota_otima = []
 
 cmds = (
     "add <ip> <weight>",
@@ -19,7 +22,7 @@ class RoteadorVirtual:
     def __init__(self,ip,periodo):
         self.ipDict = {}
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print(f"[log] -- binding to ip {ip} - port {porta}")
+        print("[log] -- binding to ip {ip} - port {porta}")
         self.sock.bind((ip,porta))
         self.periodo = periodo
 
@@ -54,7 +57,7 @@ class RoteadorVirtual:
         self.sock.listen()
         conn, addr = self.sock.accept()
         with conn:
-            print(f"[log] -- Receiving message from {addr}")
+            print("[log] -- Receiving message from {addr}")
             data = conn.recv(1024)
             if not conn.recv(2):
                 print("[ERROR] -- Size of message too large")
@@ -65,19 +68,30 @@ class RoteadorVirtual:
         '''
         Trata as mensagens de trace
         '''
+
         pass
 
-    def calculaRota(self,ip):
+    def calculaRota(self,ip):################################################################
         '''
         Calcula rota de menor peso
         '''
-        return '127.0.0.1'
+        otima = []
+        for i in rotas:
+            otimas_ip = [row[0] for row in otima]
+            if i[0] not in otimas_ip:
+                otima.append([i[0],i[1],i[2]])            
+            else:
+                indice = otimas_ip.index(i[0])
+                if int(i[2]) <= int(otima[indice][2]):
+                    otima[indice][1] = i[2]
+        return otima
+        #return '127.0.0.1'
 
     def addIP(self,ip,weight,nextDest):
         '''
         Adiciona um IP com o peso (custo de envio) para o banco de dados do Roteador
         '''
-        print(f'Adding a new IP: {ip}, with weight {weight}, next destination {nextDest}')
+        print('Adding a new IP: {ip}, with weight {weight}, next destination {nextDest}')
         self.ipDict[ip] = (weight,nextDest)
 
     def deleteIP(self,ip):
@@ -86,7 +100,7 @@ class RoteadorVirtual:
         '''
         try:
             del self.ipDict[ip]
-            print(f'Deleting IP {ip}')
+            print('Deleting IP {ip}')
         except KeyError:
             print('IP not found in cache')
 
@@ -132,3 +146,5 @@ if __name__ == "__main__":
     cmdHandler.start()
     cmdHandler.join()
     pass
+
+#Teste
