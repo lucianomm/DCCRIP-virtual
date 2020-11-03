@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+'''
+Autores:
+Luciano Mota Moraes - 2016020975 
+Matheus Henrique Gonçalves Souza - 2016068854
+'''
+
 import socket
 import os
 import json
@@ -118,7 +124,6 @@ class RoteadorVirtual:
         Calcula rota de menor peso
         '''
         return self.rotas[ip][2]
-        #return '127.0.0.1'
 
     def addIP(self,ip,weight,nextDest):
         '''
@@ -191,7 +196,7 @@ def main():
     t1.start()
 
     while(1):
-        if (tempo_anterior - time.time()) > roteador.periodo:
+        if (time.time() - tempo_anterior) > 4 *roteador.periodo:
             tempo_anterior = time.time()
             t2 = threading.Thread(target = roteador.enviaUpdate())
             t2.start()
