@@ -92,7 +92,7 @@ class RoteadorVirtual:
         Trata mensagens
         '''
         while(1):
-            msgJson = recvMsg()
+            msgJson = self.recvMsg()
             mensagem = json.load(msgJson)
             if mensagem['type'] == 'data':
                 if mensagem['destination'] == self.sock.getsockname():
